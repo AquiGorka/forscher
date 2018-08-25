@@ -1,11 +1,21 @@
 import React, { Component, Fragment, Children, cloneElement } from 'react';
 import Web3 from 'web3';
+import styled from 'styled-components';
 import Header from './Header';
 import Spinner from './Spinner';
 
 const LOADING = 'loading';
 const CONNECTED = 'metamask installed';
 const DISCONNECTED = 'no metamask';
+
+const NoMetamask = styled.h2`
+  width: 600px;
+  margin: 150px auto;
+  text-align: center;
+  background: #fff;
+  padding: 3em 0;
+  box-shadow: 0 0 0 1px #ccc;
+`;
 
 export default class Web3Provider extends Component {
   state = { mode: LOADING, web3: null };
@@ -41,7 +51,7 @@ export default class Web3Provider extends Component {
         {mode === DISCONNECTED && (
           <Fragment>
             <Header />
-            <div>Please install Metamask</div>
+            <NoMetamask>Please install Metamask</NoMetamask>
           </Fragment>
         )}
       </Fragment>
