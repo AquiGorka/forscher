@@ -13,7 +13,7 @@ const NETWORKS = new Map([
 ]);
 
 const Container = styled.main`
-  max-width: 600px;
+  max-width: 900px;
   margin: auto;
   padding: 1em;
 `;
@@ -93,13 +93,13 @@ const Transactions = ({ transactions, network }) => {
   const ether = transactions.filter(({ value, status }) => value > 0);
 
   if (!ether.length) {
-    return <NoEther>This block does not contain ether transactions</NoEther>;
+    return <NoEther>This block does not contain Ether transactions</NoEther>;
   }
   const URL = `https://${NETWORKS.get(network)}${ETHERSCAN}`;
 
   return (
     <TransactionsUl>
-      {ether.map(({ hash, value, from, to, timestamp }) => {
+      {ether.map(({ hash, value, from, to, timestamp, gas, gasPrice }) => {
         return (
           <TransactionLi key={hash}>
             <Address
@@ -110,13 +110,17 @@ const Transactions = ({ transactions, network }) => {
               {from}
             </Address>
             <Span>sent</Span>
-            <a href={`${URL}/tx/${hash}`} target="_blank">
+            <a href={`${URL}/tx/${hash}`} target="_blank" title={hash}>
               {utils.fromWei(value, 'ether')} eth
             </a>
             <Span>to</Span>
             <Address href={`${URL}/address/${to}`} target="_blank" title={to}>
               {to}
             </Address>
+            <Span />
+            <span title={`Gas used: ${gas}; Gas price: ${gasPrice} wei`}>
+              (gas fee: {gas * utils.fromWei(gasPrice, 'ether')} eth)
+            </span>
           </TransactionLi>
         );
       })}
@@ -128,11 +132,16 @@ const View = ({ blocks, loading, network }) => {
   if (loading) {
     return <Spinner />;
   }
-  const URL = `https://${NETWORKS.get(network)}${ETHERSCAN}`;
+  const net = NETWORKS.get(network);
+  const URL = `https://${net}${ETHERSCAN}`;
+  const label =
+    net === ''
+      ? 'Mainnet'
+      : net.substr(0, 1).toUpperCase() + net.substr(1, net.length - 2);
 
   return (
     <Container>
-      <h2>Showing Ether transactions for the last 10 blocks</h2>
+      <h2>Showing Ether transactions for the last 10 blocks on {label}</h2>
       <BlocksUl>
         {blocks.map(({ hash, timestamp, transactions, number }, index) => {
           return (

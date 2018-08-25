@@ -9,7 +9,7 @@ const CONNECTED = 'metamask installed';
 const DISCONNECTED = 'no metamask';
 
 const NoMetamask = styled.h2`
-  width: 600px;
+  width: 900px;
   margin: 150px auto;
   text-align: center;
   background: #fff;
