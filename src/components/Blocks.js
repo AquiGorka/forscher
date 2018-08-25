@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import en from 'javascript-time-ago/locale/en';
 import { utils } from 'web3';
 
-const ETHERSCAN = 'https://etherscan.io'
+const ETHERSCAN = 'https://etherscan.io';
 
 const Container = styled.main`
   max-width: 600px;
@@ -79,11 +79,17 @@ const Span = styled.span`
   margin: 0 7px;
 `;
 
+const NoEther = styled.div`
+  padding: 1em;
+`;
+
 const Transactions = ({ transactions }) => {
   const ether = transactions.filter(({ value, status }) => value > 0);
 
   if (!ether.length) {
-    return <div>This block does not contain transactions sending ether</div>;
+    return (
+      <NoEther>This block does not contain transactions sending ether</NoEther>
+    );
   }
 
   return (
@@ -123,7 +129,7 @@ const View = ({ blocks, loading }) => {
   }
   return (
     <Container>
-      <h2>Last 10 blocks with Ether transactions</h2>
+      <h2>Last 10 blocks's Ether transactions</h2>
       <BlocksUl>
         {blocks.map(({ hash, timestamp, transactions, number }, index) => {
           return (
