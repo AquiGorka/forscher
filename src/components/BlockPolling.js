@@ -41,7 +41,7 @@ export default class BlockPoll extends Component {
         blocks: Array.from(new Set([block, ...this.state.blocks])),
       });
     }, interval);
-    this.setState({ intervalId })
+    this.setState({ intervalId });
   }
 
   stopPolling() {
