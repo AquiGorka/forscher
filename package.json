@@ -2,7 +2,7 @@
   "name": "Forscher",
   "version": "0.0.1",
   "author": "Gorka",
-  "private": true,
+  "homepage": "https://forscher.life",
   "dependencies": {
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
