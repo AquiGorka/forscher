@@ -32,17 +32,28 @@ export default class BlockPoll extends Component {
     );
   }
 
-  startPolling() {
-    const { web3, interval = 1000 } = this.props;
+  startPolling = async () => {
+    const { web3, interval = 1000, length = 10 } = this.props;
+    // get initial N blocks
+    const lastNumber = await web3.eth.getBlockNumber();
+    new Array(length).fill(0).forEach(async (_, index) => {
+      const block = await web3.eth.getBlock(lastNumber - index - 1);
+      this.setState({ blocks: [...this.state.blocks, block] });
+    });
+    // interval
     const intervalId = setInterval(async () => {
       const blockNumber = await web3.eth.getBlockNumber();
-      const block = web3.eth.getBlock(blockNumber);
-      this.setState({
-        blocks: Array.from(new Set([block, ...this.state.blocks])),
-      });
+      const block = await web3.eth.getBlock(blockNumber);
+      const blocks = [
+        ...this.state.blocks,
+        ...(this.state.blocks.find(({ hash }) => hash === block.hash)
+          ? []
+          : [block]),
+      ];
+      this.setState({ blocks });
     }, interval);
     this.setState({ intervalId });
-  }
+  };
 
   stopPolling() {
     clearInterval(this.state.intervalId);
