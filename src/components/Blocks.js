@@ -1,10 +1,16 @@
 import React, { Component, Fragment, Children, cloneElement } from 'react';
 import Spinner from './Spinner';
 import styled from 'styled-components';
-import en from 'javascript-time-ago/locale/en';
 import { utils } from 'web3';
 
-const ETHERSCAN = 'https://etherscan.io';
+const ETHERSCAN = 'etherscan.io';
+
+const NETWORKS = new Map([
+  ['1', ''],
+  ['3', 'ropsten.'],
+  ['42', 'kovan.'],
+  ['4', 'rinkeby.'],
+]);
 
 const Container = styled.main`
   max-width: 600px;
@@ -83,14 +89,13 @@ const NoEther = styled.div`
   padding: 1em;
 `;
 
-const Transactions = ({ transactions }) => {
+const Transactions = ({ transactions, network }) => {
   const ether = transactions.filter(({ value, status }) => value > 0);
 
   if (!ether.length) {
-    return (
-      <NoEther>This block does not contain transactions sending ether</NoEther>
-    );
+    return <NoEther>This block does not contain ether transactions</NoEther>;
   }
+  const URL = `https://${NETWORKS.get(network)}${ETHERSCAN}`;
 
   return (
     <TransactionsUl>
@@ -98,22 +103,18 @@ const Transactions = ({ transactions }) => {
         return (
           <TransactionLi key={hash}>
             <Address
-              href={`${ETHERSCAN}/address/${from}`}
+              href={`${URL}/address/${from}`}
               target="_blank"
               title={from}
             >
               {from}
             </Address>
             <Span>sent</Span>
-            <a href={`${ETHERSCAN}/tx/${hash}`} target="_blank">
+            <a href={`${URL}/tx/${hash}`} target="_blank">
               {utils.fromWei(value, 'ether')} eth
             </a>
             <Span>to</Span>
-            <Address
-              href={`${ETHERSCAN}/address/${to}`}
-              target="_blank"
-              title={to}
-            >
+            <Address href={`${URL}/address/${to}`} target="_blank" title={to}>
               {to}
             </Address>
           </TransactionLi>
@@ -123,13 +124,15 @@ const Transactions = ({ transactions }) => {
   );
 };
 
-const View = ({ blocks, loading }) => {
+const View = ({ blocks, loading, network }) => {
   if (loading) {
     return <Spinner />;
   }
+  const URL = `https://${NETWORKS.get(network)}${ETHERSCAN}`;
+
   return (
     <Container>
-      <h2>Last 10 blocks's Ether transactions</h2>
+      <h2>Showing Ether transactions for the last 10 blocks</h2>
       <BlocksUl>
         {blocks.map(({ hash, timestamp, transactions, number }, index) => {
           return (
@@ -137,16 +140,13 @@ const View = ({ blocks, loading }) => {
               <BlockHeader open={!index}>
                 <Summary>
                   <div>
-                    Block #<a
-                      href={`${ETHERSCAN}/block/${number}`}
-                      target="_blank"
-                    >
+                    Block #<a href={`${URL}/block/${number}`} target="_blank">
                       {number}
                     </a>
                   </div>
                   <When>{new Date(timestamp * 1000).toLocaleTimeString()}</When>
                 </Summary>
-                <Transactions transactions={transactions} />
+                <Transactions transactions={transactions} network={network} />
               </BlockHeader>
             </BlockLi>
           );
