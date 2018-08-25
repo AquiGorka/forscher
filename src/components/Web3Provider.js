@@ -18,19 +18,22 @@ const NoMetamask = styled.h2`
 `;
 
 export default class Web3Provider extends Component {
-  state = { mode: LOADING, web3: null };
+  state = { mode: LOADING, web3: null, network: null };
 
-  componentDidMount() {
+  async componentDidMount() {
     if (typeof window.web3 === 'undefined') {
       this.setState({ mode: DISCONNECTED });
       return;
     }
     const web3 = new Web3(window.web3.currentProvider);
-    this.setState({ mode: CONNECTED, web3 });
+    const network = await new Promise(r => {
+      window.web3.version.getNetwork((err, network) => r(network));
+    });
+    this.setState({ mode: CONNECTED, web3, network });
   }
 
   render() {
-    const { mode, web3 } = this.state;
+    const { mode, web3, network } = this.state;
     const { children, ...rest } = this.props;
 
     return (
@@ -38,7 +41,7 @@ export default class Web3Provider extends Component {
         {mode === CONNECTED && (
           <Fragment>
             {Children.map(children, child =>
-              cloneElement(child, { ...rest, web3 }),
+              cloneElement(child, { ...rest, web3, network }),
             )}
           </Fragment>
         )}
