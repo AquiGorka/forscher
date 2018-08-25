@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import Web3Provider from '../components/Web3Provider'
 
 class App extends Component {
   render() {
-    return <div>Forscher</div>;
+    return <Web3Provider>
+      <div>Forscher</div>
+    </Web3Provider>;
   }
 }
 
