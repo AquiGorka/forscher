@@ -15,7 +15,7 @@ const Wrap = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  width: 900px;
+  max-width: 900px;
   margin: auto;
 `;
 

@@ -7,6 +7,7 @@ import Spinner from './Spinner';
 const LOADING = 'loading';
 const CONNECTED = 'metamask installed';
 const DISCONNECTED = 'no metamask';
+const MOBILE = 'currently not supported';
 
 const NoMetamask = styled.h2`
   width: 900px;
@@ -17,10 +18,20 @@ const NoMetamask = styled.h2`
   box-shadow: 0 0 0 1px #ccc;
 `;
 
+const Mobile = styled(NoMetamask)`
+  width: auto;
+  margin: 2em 0.5em;
+  padding: 3em 1em;
+`;
+
 export default class Web3Provider extends Component {
   state = { mode: LOADING, web3: null, network: null };
 
   async componentDidMount() {
+    if (window.orientation > -1) {
+      this.setState({ mode: MOBILE });
+      return;
+    }
     if (typeof window.web3 === 'undefined') {
       this.setState({ mode: DISCONNECTED });
       return;
@@ -38,6 +49,12 @@ export default class Web3Provider extends Component {
 
     return (
       <Fragment>
+        {mode === MOBILE && (
+          <Fragment>
+            <Header />
+            <Mobile>Currently mobile is not supported</Mobile>
+          </Fragment>
+        )}
         {mode === CONNECTED && (
           <Fragment>
             {Children.map(children, child =>
